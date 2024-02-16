@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 
 DATABASE_FILE_NAME = "AddressBook.json"
@@ -29,17 +29,6 @@ def hello():
     return "How can I help you?"
 
 
-# @input_error
-# def add_contact(name: str, phone=None, email=None, birthday=None, address=None):
-#     if name in data:
-#         return "This name is already in the contact list!"
-#     else:
-#         data[name] = {"address": add_address(address), "phone": add_phone(phone), "email": add_email(email),
-#                       "birthday": add_birthday(birthday)}
-#
-#         return f"Contact '{name}' with phone number '{phone}' added successfully."
-
-
 @input_error
 def add_name(name: str):
     if name in data:
@@ -47,7 +36,6 @@ def add_name(name: str):
     else:
         data[name] = {"address": None, "phone": [], "email": None, "birthday": None}
         return f"{name} added to contacts"
-        # return f"Contact '{name}' with phone number '{phone}' added successfully."
 
 
 @input_error
@@ -98,22 +86,6 @@ def add_birthday(name: str, str_birthday):
 
 
 @input_error
-def add_address(name: str, *address):
-    print("add_address")
-    if name not in data:
-        return "Name not found in contacts!"
-    else:
-        # inner_dict = data[name]
-        # inner_dict["address"] = list(address)
-        # data[name] = inner_dict
-        record = data.get(name)
-        record.update({"address": list(address)})
-        data.update({name: record})
-
-        return f"Address added to {name} contact list"
-
-
-@input_error
 def add_email(name: str, email):
     def is_valid_email(email):
         pattern = r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$'
@@ -123,9 +95,6 @@ def add_email(name: str, email):
         return "Name not found in contacts!"
     else:
         if is_valid_email(email):
-            # inner_dict = data[name]
-            # inner_dict["email"] = email
-            # data[name] = inner_dict
             record = data.get(name)
             print("record", record)
             record.update({"email": email})
@@ -134,6 +103,19 @@ def add_email(name: str, email):
             return f"Contact '{name}' with email '{email}' added successfully."
         else:
             return "Wrong email."
+
+
+@input_error
+def add_address(name: str, *address):
+    print("add_address")
+    if name not in data:
+        return "Name not found in contacts!"
+    else:
+        record = data.get(name)
+        record.update({"address": list(address)})
+        data.update({name: record})
+
+        return f"Address added to {name} contact list"
 
 
 @input_error
@@ -158,8 +140,8 @@ def show_all():
         return "No contacts available."
 
     result = "All contacts:\n"
-    for name, phone in data.items():
-        result += f"{name}: {phone}\n"
+    for name, record in data.items():
+        result += f"{name}: {record}\n"
     return result
 
 
@@ -180,16 +162,17 @@ def default_handler():
 def my_help():
     return ("You can use these commands:\n"
             "hello\n"
-            "add name phone\n"
+            # "add all Name phone birthday email address\n"
 
-            "add------------------\n"
-            "add------------------\n"
-            "add------------------\n"
-            "add------------------\n"
-            "add------------------\n"
+            "add name Name\n"
+            "add adr street house apartment \n"
+            "add phone 1234567890\n"
+            "add email some-email@gmail.com\n"
+            "add brd YYYY-MM-DD\n"
 
-            "change name phone\n"
-            "phone name\n"
+            # "change name phone\n"
+            # "phone name\n"
+
             "show all\n"
             "good bye\n"
             "close\n"
@@ -199,22 +182,20 @@ def my_help():
 
 commands = {
     "hello": hello,
+    "help": my_help,
 
-    "change ": change_phone,
-    "phone ": get_phone,
+    # "change ": change_phone,
+    # "phone ": get_phone,
     "show all": show_all,
     "good bye": good_bye,
     "close": good_bye,
     "exit": good_bye,
-    "help": my_help,
 
     "add name": add_name,
     "add adr": add_address,
     "add phone": add_phone,
     "add email": add_email,
     "add brd": add_birthday,
-
-    # "add all ": add_contact,
 
 }
 
